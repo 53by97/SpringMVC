@@ -1,5 +1,9 @@
 package com.kvvssut.springmvc.controller;
 
+import java.math.BigDecimal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,25 +16,24 @@ import com.kvvssut.springmvc.mvc.service.RequestService;
 @Controller
 public class HelloWorldController {
 
-//	private static Logger logger = Logger.getLogger(HelloWorldController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(HelloWorldController.class);
 
 	@Autowired
 	private RequestService requestService;
 
-
-	@RequestMapping("/")
+	@RequestMapping("/request_page")
 	public String hello() {
 		return "index";
 	}
 
 	@RequestMapping(value = "/userbalance", method = RequestMethod.GET)
 	public String getBalance(@RequestParam("name") String name, Model model) {
-		System.out.println("start");
-		String message = "Hi " + name + "!";
-		System.out.println(requestService.getBalance(name));
+		BigDecimal balance = requestService.getBalance(name);
+		String message = new StringBuilder("Hi ").append(name).append("! ").append("Your current balance is : ")
+				.append(balance).toString();
 		model.addAttribute("message", message);
-		System.out.println("end");
-		return "hi";
+		LOGGER.info("User : {}, balance is : {}", name, balance);
+		return "user_balance";
 	}
 
 }
